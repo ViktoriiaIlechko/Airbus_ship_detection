@@ -67,7 +67,7 @@ Activate the virtual environment:
 
    ```bash
    pip install -r requirements.txt
-### Running the Project
+### Usage
 1. Ensure your virtual environment is activated.
 2. Run the project: 
 
@@ -85,4 +85,11 @@ By this command you can start the training process.
     ```bash
     python source/inference.py
 
-## Usage
+
+If you only want to test the models without running the training process, you can download pre-trained versions. The pre-trained models are stored in the "source/models" directory.
+
+## Dataset
+You can find originall dataset here: [dataset](https://www.kaggle.com/competitions/airbus-ship-detection/data?select=train_v2)
+
+In progect it localisati path is "source/data_airbus"
+
