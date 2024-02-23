@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.metrics import MeanIoU
 from source.data import load_and_preprocess_data
+from tensorflow.keras.models import load_model
 
 
 # Define U-Net model
@@ -36,8 +37,8 @@ def build_unet(input_shape):
     # Output layer
     outputs = layers.Conv2D(1, 1, activation='sigmoid')(conv5)
 
-    model = models.Model(inputs=inputs, outputs=outputs)
-    return model
+    mod = models.Model(inputs=inputs, outputs=outputs)
+    return mod
 
 
 def dice_coefficient(y_true, y_pred, smooth=1):
@@ -52,22 +53,24 @@ def dice_loss(y_true, y_pred):
     return 1 - dice_coefficient(y_true, y_pred)
 
 
-# Load and preprocess data
-data_path = 'C:\Viktoria\wthRmn\pythonProject\Airbus_ship\data_airbus'
-labels_file = 'C:\\Viktoria\\wthRmn\\pythonProject\\Airbus_ship\\data_airbus\\train_ship_segmentations_v2.csv'
-x_train, y_train, x_val, y_val = load_and_preprocess_data(data_dir=data_path, labels_file=labels_file, test_size=0.2,
-                                                          random_state=42)
+if __name__ == "__main__":
+    # Load and preprocess data
+    data_path = 'C:\Viktoria\wthRmn\pythonProject\Airbus_ship\data_airbus'
+    labels_file = 'C:\\Viktoria\\wthRmn\\pythonProject\\Airbus_ship\\data_airbus\\train_ship_segmentations_v2.csv'
+    x_train, y_train, x_val, y_val = load_and_preprocess_data(data_dir=data_path, labels_file=labels_file,
+                                                              test_size=0.2,
+                                                              random_state=42)
 
-# Build the modelz
-input_shape = x_train[0].shape
-model = build_unet(input_shape)
+    # Build the model
+    input_shape = x_train[0].shape
+    model = build_unet(input_shape)
 
-# Compile the model
-# model.compile(optimizer='adam', loss=dice_loss, metrics=[MeanIoU(num_classes=2)])
-model.compile(optimizer='adam', loss=dice_loss, metrics=['accuracy'])
+    # Compile the model
+    # model.compile(optimizer='adam', loss=dice_loss, metrics=[MeanIoU(num_classes=2)])
+    model.compile(optimizer='adam', loss=dice_loss, metrics=['accuracy'])
 
-# Train the model
-model.fit(x_train, y_train, epochs=5, batch_size=32, validation_split=0.2)
+    # Train the model
+    model.fit(x_train, y_train, epochs=5, batch_size=32, validation_split=0.2)
 
-# Save the model
-model.save("semantic_segmentation_model.h5")
+    # Save the model
+    model.save("C:\Viktoria\wthRmn\pythonProject\Airbus_ship\source\s_s_model.h5")
