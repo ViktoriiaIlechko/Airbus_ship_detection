@@ -1,8 +1,8 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models
-from tensorflow.keras.metrics import MeanIoU
 from source.data import load_and_preprocess_data
-from tensorflow.keras.models import load_model
+import os
+import pathlib
 
 
 # Define U-Net model
@@ -54,9 +54,10 @@ def dice_loss(y_true, y_pred):
 
 
 if __name__ == "__main__":
+    cur_loc = pathlib.Path(__file__).parent
     # Load and preprocess data
-    data_path = 'C:\Viktoria\wthRmn\pythonProject\Airbus_ship\data_airbus'
-    labels_file = 'C:\\Viktoria\\wthRmn\\pythonProject\\Airbus_ship\\data_airbus\\train_ship_segmentations_v2.csv'
+    data_path = os.path.abspath(os.path.join(cur_loc, 'data_airbus'))
+    labels_file = os.path.abspath(os.path.join(cur_loc, 'data_airbus\\train_ship_segmentations_v2.csv'))
     x_train, y_train, x_val, y_val = load_and_preprocess_data(data_dir=data_path, labels_file=labels_file,
                                                               test_size=0.2,
                                                               random_state=42)
@@ -73,4 +74,5 @@ if __name__ == "__main__":
     model.fit(x_train, y_train, epochs=5, batch_size=32, validation_split=0.2)
 
     # Save the model
-    model.save("C:\Viktoria\wthRmn\pythonProject\Airbus_ship\source\s_s_model.h5")
+    model_loc = os.path.abspath(os.path.join(cur_loc, 'data_airbus\s_s_model.h5'))
+    model.save(model_loc)

@@ -5,24 +5,25 @@ from source.data import load_new_data
 from source.train import dice_loss
 from PIL import Image
 import matplotlib.pyplot as plt
+import pathlib
 
 if __name__ == "__main__":
     # Load the trained model
-    model = tf.keras.models.load_model("C:\Viktoria\wthRmn\pythonProject\Airbus_ship\source\s_s_model.h5", custom_objects={'dice_loss': dice_loss})
-    data_dir = 'C:\Viktoria\wthRmn\pythonProject\Airbus_ship\data_airbus'
+    current_dir = pathlib.Path(__file__).parent
+    model_dir = os.path.abspath(os.path.join(current_dir, 'models\s_s_model.h5'))
+    model = tf.keras.models.load_model(model_dir, custom_objects={'dice_loss': dice_loss})
 
     # Load new data for inference
     # new_data_dir = os.path.join(data_dir, 'test_v2')
     # x_new = load_new_data(new_data_dir=new_data_dir)
-    new_data_dir = os.path.abspath(os.path.join(data_dir, 'train_test_img.jpg '))
+    new_data_dir = os.path.abspath(os.path.join(current_dir, 'data_airbus\\train_test_img.jpg '))
+    print('new_data_dir', new_data_dir)
     x_new = load_new_data(new_data_dir=new_data_dir)
     # Make predictions
-    # predictions = model.predict(x_new)
     predictions = model.predict(x_new)
 
     # Visualize predictions and save images
-    output_dir = 'C:\\Viktoria\\wthRmn\\pythonProject\\Airbus_ship\\visualisations'
-
+    output_dir = os.path.join(current_dir, '..', 'visualisations')
 
     os.makedirs(output_dir, exist_ok=True)
 
