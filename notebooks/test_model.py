@@ -1,18 +1,25 @@
 import os
+import pathlib
 import tensorflow as tf
+from source.data import load_and_preprocess_data
 from source.data import load_new_data
 from source.train import dice_loss
 import matplotlib.pyplot as plt
-import pathlib
 
 if __name__ == "__main__":
-    # Load the trained model
+    # Load model
     current_dir = pathlib.Path(__file__).parent
-    model_dir = os.path.abspath(os.path.join(current_dir, 'models\s_s_model.h5'))
+    model_dir = os.path.abspath(os.path.join(current_dir, '..', 'source', 'models', 's_s_model.h5'))
     model = tf.keras.models.load_model(model_dir, custom_objects={'dice_loss': dice_loss})
 
-    # Load new data for inference
-    new_data_dir = os.path.join(os.path.join(current_dir, 'data_airbus\\test_v2'))
+    # Evaluate the model
+    data_dir = os.path.abspath(os.path.join(current_dir, '..', 'source', 'data_airbus'))
+    labels_file = os.path.abspath(os.path.join(current_dir, '..', 'source', 'data_airbus\\train_ship_segmentations_v2.csv'))
+    x_train, y_train, x_val, y_val = load_and_preprocess_data(data_dir=data_dir, labels_file=labels_file, test_size=0.2,
+                                                              random_state=42)
+    loss, accuracy = model.evaluate(x_val, y_val)
+    print(f"Validation Loss: {loss}, Validation Accuracy: {accuracy}")
+    new_data_dir = os.path.abspath(os.path.join(current_dir, '..', 'source', 'data_airbus\\train_test_img.jpg '))
     x_new = load_new_data(new_data_dir=new_data_dir)
     # Make predictions
     predictions = model.predict(x_new)
